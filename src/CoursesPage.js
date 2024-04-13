@@ -15,7 +15,7 @@ function CoursesPage() {
     };
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/courses')
+        fetch('http://localhost:5000/api/courses1')
             .then(response => response.json())
             .then(data => {
                 // Ideally, check enrollments here and mark courses as enrolled if applicable
