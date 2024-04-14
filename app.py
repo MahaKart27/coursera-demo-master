@@ -28,11 +28,14 @@ def create_user():
     password = data.get('password')
     # designation=data.get("designation")
     # Check if user already exists
+    if username=="adminUser":
+        users_collection.insert_one({'username': username, 'password': password,"student_list":[]})
+        return jsonify({"message": "User created successfully", "data": data}), 201
+         
     if users_collection.find_one({'username': username}):
         return jsonify({"message": "User already exists"}), 400
-
     # Insert user data into MongoDB
-    users_collection.insert_one({'username': username, 'password': password,"enrolled_course":{}})
+    users_collection.insert_one({'username': username, 'password': password,"enrolled_courses":[],"pending_courses":[]})
     return jsonify({"message": "User created successfully", "data": data}), 201
 
 # @app.route('/courses', methods=['POST'])
@@ -89,32 +92,98 @@ def enroll_course():
     data = request.json
     enroll_id = data.get('id')
     user_name = data.get('username')
-    
+    print(data)
     # Check if the user is already enrolled in the course
     courses = users_course.find_one() 
     courses = courses["courses"]
     
     # Get the course details for the given enrollment ID
-    enrolled_course = courses.get(str(enroll_id))
+    enrolled_course1 = courses.get(str(enroll_id))
     
     # Update the user's enrolled_course field in the collection
-    users_collection.update_one({'username': user_name}, {'$set': {'enrolled_course': enrolled_course}})
+    # users_collection.update_one({'username': user_name}, {'$set': {'enrolled_course': enrolled_course}})
     
-    return jsonify({"message": "Enrollment successful", "data": enrolled_course}), 200
+    admin=users_collection.find_one({"username":"adminUser"})
+    print(admin)
+    print(enrolled_course1)
+    admin_courses=admin.get("student_list")
+    admin_courses.append({"username":user_name,"course_name":enrolled_course1["name"]})
+    users_collection.update_one({'username': "adminUser"}, {'$set': {'student_list': admin_courses}})
+    
+    return jsonify({"message": "Enrollment successful", "data": enrolled_course1}), 200
 
 
 @app.route('/api/enrollments', methods=['GET'])
 def get_enrollments():
     # Add course details to each enrollment
     detailed_enrollments = []
-    for enrollment in enrollments:
-        course = next((c for c in courses if c["id"] == enrollment["course_id"]), None)
-        if course:
-            detailed_enrollments.append({
-                'username': enrollment['username'],
-                'course_name': course['name']
-            })
+    # for enrollment in enrollments:
+    #     course = next((c for c in courses if c["id"] == enrollment["course_id"]), None)
+    #     if course:
+    #         detailed_enrollments.append({
+    #             'username': enrollment['username'],
+    #             'course_name': course['name']
+    #         })
+    data=users_collection.find_one({"username":"adminUser"})
+    detailed_enrollments=data.get("student_list")
     return jsonify(detailed_enrollments)
+@app.route("/api/approve", methods=["POST"])
+def approve():
+    data = request.json
+    name = data.get("username")
+    course_name = data.get("course")
+
+    # Access global variable just_courses
+    courses = just_courses.find_one()
+    courses = courses["courses"]
+    enrollc = {}
+    for i in courses:
+        if i["name"] == course_name:
+            enrollc = i
+            break
+    
+    admin_data = users_collection.find_one({"username": "adminUser"})
+    admin_data = admin_data.get("student_list")
+    for i in range(len(admin_data)):
+        if admin_data[i]["username"] == name:
+            admin_data.pop(i)
+            break
+    
+    enroll_course = users_collection.find_one({"username": name})
+    pending_courses = enroll_course.get("pending_courses", [])
+    pending_courses.append(enrollc)
+    
+    users_collection.update_one({'username': "adminUser"}, {'$set': {'student_list': admin_data}})
+    users_collection.update_one({'username': name}, {'$set': {'pending_courses': pending_courses}})
+    
+    return jsonify(data)
+
+@app.route("/api/approve1", methods=["POST"])
+def approve1():
+    data = request.json
+    name = data.get("username")
+    course_name = data.get("course")
+
+    # Access global variable just_courses
+    
+    for i in courses:
+        if i["name"] == course_name:
+            enrollc = i
+            break
+    
+    admin_data = users_collection.find_one({"username": "adminUser"})
+    admin_data = admin_data.get("student_list")
+    for i in range(len(admin_data)):
+        if admin_data[i]["username"] == name:
+            admin_data.pop(i)
+            break
+    
+    
+    
+    users_collection.update_one({'username': "adminUser"}, {'$set': {'student_list': admin_data}})
+    
+    
+    return jsonify(data)
 
 
 if __name__ == '__main__':

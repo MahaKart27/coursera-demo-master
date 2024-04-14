@@ -42,12 +42,13 @@ function CoursesPage() {
     // };
 
     const enrollCourse = (courseId) => {
+        console.log(username,courseId)
         fetch('http://localhost:5000/api/enroll', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username: username, courseId: courseId })
+            body: JSON.stringify({ username: username, id: courseId })
         })
         .then(response => response.json())
         .then(data => {

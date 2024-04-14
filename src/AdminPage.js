@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 function AdminPage() {
     const [enrollments, setEnrollments] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [course, setCourse] = useState("");
     const navigate = useNavigate();
 
     const handleLogout = () => {
         sessionStorage.clear();  // This clears all session storage, including the username
         navigate('/');      // Redirect to login or any other public page
     };
+
     useEffect(() => {
         fetch('http://localhost:5000/api/enrollments')
             .then(response => response.json())
@@ -74,6 +76,48 @@ function AdminPage() {
         }
     };
 
+    async function handleApprove(name, course) {
+        try {
+            console.log(name,course)
+            const response = await fetch("http://localhost:5000/api/approve", {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: name,
+                    course: course
+                }) // body data type must match "Content-Type" header
+            });
+            if (response.ok) {
+                console.log("DONE ");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function handleApprove1(name, course) {
+        try {
+            console.log(name,course)
+            const response = await fetch("http://localhost:5000/api/approve1", {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: name,
+                    course: course
+                }) // body data type must match "Content-Type" header
+            });
+            if (response.ok) {
+                console.log("DONE ");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <div>
             <h1>Admin - Course Enrollments</h1>
@@ -105,6 +149,8 @@ function AdminPage() {
                         <h2>User Details</h2>
                         <p><strong>Name:</strong> {selectedUser.username}</p>
                         <p><strong>Enrolled Course:</strong> {selectedUser.course_name}</p>
+                        <button onClick={() => { handleApprove(selectedUser.username, selectedUser.course_name) }}>Enroll</button>
+                        <button onClick={() => { handleApprove1(selectedUser.username, selectedUser.course_name)}}>Reject </button>
                     </div>
                 </div>
             )}
