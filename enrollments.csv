@@ -1,0 +1,8 @@
+username,course_id,status,paymentStatus
+user1,2,pending,unpaid
+user2,1,pending,unpaid
+user1,2,pending,unpaid
+user1,2,pending,unpaid
+user1,1,pending,unpaid
+user1,2,pending,unpaid
+user1,3,pending,unpaid

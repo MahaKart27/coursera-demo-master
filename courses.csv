@@ -1,0 +1,4 @@
+id,name,description,image,duration,learningObjectives,fees,schedule
+1,Introduction to Python,Learn the basics of Python programming.,https://www.freecodecamp.org/news/content/images/size/w2000/2022/02/Banner-10.png,5 weeks,"Basic syntax,Data structures,Function definitions",$99,"Mondays and Wednesdays, 7-9 PM"
+2,Web Development with Flask,Develop web applications using Flask.,https://www.schoolofit.co.za/wp-content/uploads/2020/03/Flask-courses-806x393.png,6 weeks,"Flask basics,Templates,Database integration",$120,"Tuesdays and Thursdays, 6-8 PM"
+3,Advanced Machine Learning,Explore advanced topics in machine learning.,https://miro.medium.com/v2/resize:fit:720/format:webp/1*cG6U1qstYDijh9bPL42e-Q.jpeg,8 weeks,"Neural networks,Deep learning,TensorFlow",$150,"Fridays, 5-8 PM"
