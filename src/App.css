@@ -1,38 +1,66 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* App.css */
+.page-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: column; /* Adjust to column layout */
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  height: 100vh;
+  background-color: #f3f4f6; /* Light background color */
 }
 
-.App-link {
-  color: #61dafb;
+.container {
+  width: 300px;
+  padding: 40px 30px; /* Updated padding */
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1); /* Soft shadow effect */
+  text-align: center; /* Center align text */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.blue-button, .link-button {
+  display: block;
+  width: 100%;
+  background-color: #007bff; /* Blue color */
+  color: #fff; /* White text */
+  padding: 12px; /* Padding for buttons */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px; /* Updated margin */
+  text-align: center;
+  font-size: 16px; /* Font size */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.blue-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.link-button {
+  background-color: transparent; /* Transparent background */
+  color: #007bff; /* Blue color */
+  border: none;
+}
+
+.link-button:hover {
+  color: #0056b3; /* Darker shade on hover */
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px; /* Padding for input fields */
+  margin-bottom: 20px; /* Spacing between input fields */
+  border: 1px solid #ccc; /* Border color */
+  border-radius: 5px; /* Border radius */
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  outline: none; /* Remove outline on focus */
+  border-color: #007bff; /* Change border color on focus */
+}
+
+h1, h2 {
+  margin-bottom: 20px; /* Spacing below heading */
 }
