@@ -439,6 +439,8 @@ def update_enrollment_status(username, course_id):
     status = data.get('status')
     paymentStatus = data.get('paymentStatus', 'unpaid')
 
+    global enrollments  # Use global keyword to reference the global variable
+
     for enrollment in enrollments:
         if enrollment['username'] == username and enrollment['course_id'] == course_id:
             enrollment['status'] = status
