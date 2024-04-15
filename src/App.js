@@ -1,37 +1,17 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginComponent from './LoginComponent';
-import WelcomePage from './WelcomePage';
-import CoursesPage from './CoursesPage';
-import AdminPage from './AdminPage';
-import ErrorPage from './ErrorPage';
-import ProtectedRoute from './ProtectedRoute'; // Import the ProtectedRoute component
+import ApplicationForm from './ApplicationForm';
 
 function App() {
+  const handleSubmit = (formData) => {
+    console.log(formData); // Handle form submission here
+  };
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LoginComponent />} />
-        <Route path="/welcome" element={<WelcomePage />} />
-        <Route 
-                    path="/admin" 
-                    element={
-                        <ProtectedRoute>
-                            <AdminPage />
-                        </ProtectedRoute>
-                    } 
-                />
-                <Route 
-                    path="/courses" 
-                    element={
-                        <ProtectedRoute>
-                            <CoursesPage />
-                        </ProtectedRoute>
-                    } 
-                />
-        <Route path="/error" element={<ErrorPage />} />
-      </Routes>
-    </Router>
+    <div className="App">
+      <header className="App-header">
+        <ApplicationForm onSubmit={handleSubmit} />
+      </header>
+    </div>
   );
 }
 
