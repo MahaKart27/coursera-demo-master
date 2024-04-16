@@ -190,7 +190,35 @@ def approve():
     send_email(name, subject, body)
     
     return jsonify(data)
+@app.route("/api/pay",methods=["POST"])
+def approve4():
+    data=request.json
+    name=data.get("name")
+    course_name=data.get("course")
+    courses = just_courses.find_one()
 
+    conf=users_collection.find_one({"username":name})
+    courses = courses["courses"]
+    enrollc = {}
+    for i in courses:
+        if i["name"] == course_name:
+            enrollc = i
+            break
+    enrolled=conf.get("enrolled_courses")
+    enrolled.append(enrollc)
+    users_collection.update_one({'username': name}, {'$set': {'enrolled_courses': enrolled}})
+    return jsonify("done")
+
+
+
+
+@app.route("/api/confirmed",methods=["POST"])
+def approve2():
+    data=request.json
+    name=data.get("name")
+    name=users_collection.find_one({"username":name})
+    name=name.get("enrolled_courses")
+    return jsonify(name)
 
 @app.route("/api/approve1", methods=["POST"])
 def approve1():
