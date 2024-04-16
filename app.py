@@ -133,7 +133,7 @@ def get_enrollments():
     return jsonify(detailed_enrollments)
 
 def send_email(recipient, subject, body):
-    sender_email = ''  # Replace with your email
+    sender_email = 'your_email@example.com'  # Replace with your email
     sender_password = 'your_email_password'  # Replace with your email password
 
     msg = MIMEMultipart()
@@ -142,6 +142,8 @@ def send_email(recipient, subject, body):
     msg['Subject'] = subject
 
     msg.attach(MIMEText(body, 'plain'))
+
+    server = None  # Initialize server variable outside the try block
 
     try:
         server = smtplib.SMTP('smtp.example.com', 587)  # Replace with your SMTP server
