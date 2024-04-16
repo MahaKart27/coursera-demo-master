@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 #updates
 # Connect to MongoDB
 client = MongoClient('mongodb://localhost:27017/')
@@ -26,6 +29,7 @@ def create_user():
     data = request.json
     username = data.get('username')
     password = data.get('password')
+    email=data.get("email")
     # designation=data.get("designation")
     # Check if user already exists
     if username=="adminUser":
@@ -35,7 +39,7 @@ def create_user():
     if users_collection.find_one({'username': username}):
         return jsonify({"message": "User already exists"}), 400
     # Insert user data into MongoDB
-    users_collection.insert_one({'username': username, 'password': password,"enrolled_courses":[],"pending_courses":[]})
+    users_collection.insert_one({'username': username, 'password': password,"enrolled_courses":[],"pending_courses":[],"email":email})
     return jsonify({"message": "User created successfully", "data": data}), 201
 
 # @app.route('/courses', methods=['POST'])
@@ -127,12 +131,36 @@ def get_enrollments():
     data=users_collection.find_one({"username":"adminUser"})
     detailed_enrollments=data.get("student_list")
     return jsonify(detailed_enrollments)
+
+def send_email(recipient, subject, body):
+    sender_email = ''  # Replace with your email
+    sender_password = 'your_email_password'  # Replace with your email password
+
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = recipient
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        server = smtplib.SMTP('smtp.example.com', 587)  # Replace with your SMTP server
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, recipient, msg.as_string())
+        print(f"Email sent successfully to {recipient}")
+    except Exception as e:
+        print(f"Error sending email: {e}")
+    finally:
+        if server:
+            server.quit()
+
 @app.route("/api/approve", methods=["POST"])
 def approve():
     data = request.json
     name = data.get("username")
     course_name = data.get("course")
-
+    
     # Access global variable just_courses
     courses = just_courses.find_one()
     courses = courses["courses"]
@@ -156,7 +184,13 @@ def approve():
     users_collection.update_one({'username': "adminUser"}, {'$set': {'student_list': admin_data}})
     users_collection.update_one({'username': name}, {'$set': {'pending_courses': pending_courses}})
     
+    # Send email to the user
+    subject = "Course Enrollment Approved"
+    body = f"Hello {name},\n\nYour enrollment for the course {course_name} has been approved."
+    send_email(name, subject, body)
+    
     return jsonify(data)
+
 
 @app.route("/api/approve1", methods=["POST"])
 def approve1():
