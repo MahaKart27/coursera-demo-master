@@ -1,0 +1,4 @@
+username,password,role
+user1,password123,student
+user2,password456,student
+adminuser,password456,admin

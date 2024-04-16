@@ -5,6 +5,7 @@ import WelcomePage from './WelcomePage';
 import CoursesPage from './CoursesPage';
 import AdminPage from './AdminPage';
 import ErrorPage from './ErrorPage';
+import PaymentPage from './PaymentPage';
 import ProtectedRoute from './ProtectedRoute'; // Import the ProtectedRoute component
 
 function App() {
@@ -14,21 +15,29 @@ function App() {
         <Route path="/" element={<LoginComponent />} />
         <Route path="/welcome" element={<WelcomePage />} />
         <Route 
-                    path="/admin" 
-                    element={
-                        <ProtectedRoute>
-                            <AdminPage />
-                        </ProtectedRoute>
-                    } 
-                />
-                <Route 
-                    path="/courses" 
-                    element={
-                        <ProtectedRoute>
-                            <CoursesPage />
-                        </ProtectedRoute>
-                    } 
-                />
+          path="/admin" 
+          element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/courses" 
+          element={
+            <ProtectedRoute>
+              <CoursesPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/payment" 
+          element={
+            <ProtectedRoute>
+              <PaymentPage />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/error" element={<ErrorPage />} />
       </Routes>
     </Router>

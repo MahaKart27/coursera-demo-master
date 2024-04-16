@@ -4,21 +4,29 @@ import { useNavigate } from 'react-router-dom';
 function AdminPage() {
     const [enrollments, setEnrollments] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [filterStatus, setFilterStatus] = useState('all');
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        sessionStorage.clear();  // This clears all session storage, including the username
-        navigate('/');      // Redirect to login or any other public page
+        sessionStorage.clear();
+        navigate('/');
     };
+
     useEffect(() => {
         fetch('http://localhost:5000/api/enrollments')
             .then(response => response.json())
-            .then(data => setEnrollments(data))
+            .then(data => {
+                if (filterStatus === 'all') {
+                    setEnrollments(data);
+                } else {
+                    const filteredEnrollments = data.filter(enrollment => enrollment.status === filterStatus);
+                    setEnrollments(filteredEnrollments);
+                }
+            })
             .catch(error => console.error('Error fetching enrollments:', error));
-    }, []);
+    }, [filterStatus]);
 
     const handleUserClick = (username) => {
-        // Assuming fetching user details might be another endpoint if more info is needed
         const userDetails = enrollments.find(enrollment => enrollment.username === username);
         setSelectedUser(userDetails);
     };
@@ -27,7 +35,41 @@ function AdminPage() {
         setSelectedUser(null);
     };
 
-    // Inline styles
+    const handleApprove = (username, course_id) => {
+        const userEmail = prompt('Enter user email:');
+        if (userEmail) {
+            updateEnrollmentStatus(username, course_id, 'approved', userEmail);
+        }
+    };
+
+    const handleDeny = (username, course_id) => {
+        const userEmail = prompt('Enter user email:');
+        if (userEmail) {
+            updateEnrollmentStatus(username, course_id, 'denied', userEmail);
+        }
+    };
+
+    const updateEnrollmentStatus = (username, course_id, status, userEmail) => {
+        fetch(`http://localhost:5000/api/enrollments/${username}/${course_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: status, userEmail: userEmail }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            const updatedEnrollments = enrollments.map(enrollment => {
+                if (enrollment.username === username && enrollment.course_id === course_id) {
+                    return { ...enrollment, status: status };
+                }
+                return enrollment;
+            });
+            setEnrollments(updatedEnrollments);
+        })
+        .catch(error => console.error('Error updating enrollment status:', error));
+    };
+
     const styles = {
         table: {
             width: '100%',
@@ -79,11 +121,21 @@ function AdminPage() {
             <h1>Admin - Course Enrollments</h1>
             <button onClick={handleLogout}>Logout</button>
             <div style={{ padding: '20px' }}>
+                <label>
+                    Filter by Status:
+                    <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                        <option value="all">All</option>
+                        <option value="approved">Approved</option>
+                        <option value="denied">Denied</option>
+                    </select>
+                </label>
                 <table style={styles.table}>
                     <thead>
                         <tr>
                             <th style={styles.th}>User</th>
                             <th style={styles.th}>Course</th>
+                            <th style={styles.th}>Status</th>
+                            <th style={styles.th}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,6 +145,15 @@ function AdminPage() {
                                     {enrollment.username}
                                 </td>
                                 <td style={styles.td}>{enrollment.course_name}</td>
+                                <td style={styles.td}>{enrollment.status}</td>
+                                <td>
+                                    {enrollment.status !== 'approved' && (
+                                        <button onClick={() => handleApprove(enrollment.username, enrollment.course_id)}>Approve</button>
+                                    )}
+                                    {enrollment.status !== 'denied' && (
+                                        <button onClick={() => handleDeny(enrollment.username, enrollment.course_id)}>Deny</button>
+                                    )}
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -105,6 +166,8 @@ function AdminPage() {
                         <h2>User Details</h2>
                         <p><strong>Name:</strong> {selectedUser.username}</p>
                         <p><strong>Enrolled Course:</strong> {selectedUser.course_name}</p>
+                        <p><strong>Status:</strong> {selectedUser.status}</p>
+                        <p><strong>Payment Status:</strong> {selectedUser.payment_status}</p>
                     </div>
                 </div>
             )}
