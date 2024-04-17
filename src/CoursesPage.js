@@ -8,7 +8,7 @@ function CoursesPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [approvedCourse, setApprovedCourse] = useState([]);
-    const [display, setDisplay] = useState(false); // Changed default value to false
+    const [display, setDisplay] = useState(0); // Changed default value to false
 
     const username = sessionStorage.getItem('username') || 'Default User';
 
@@ -76,12 +76,20 @@ function CoursesPage() {
                 alert('Failed to enroll in course');
             });
     };
+    function handleApprove(){
+        if (display===0){
+            setDisplay(1)
+        }
+        else{
+            setDisplay(0)
+        }
+    }
 
     return (
         <div>
             <h1>Courses Page</h1>
             <button onClick={handleLogout}>Logout</button>
-            <button onClick={() => setDisplay(!display)}>{display ? "View Courses" : "View Approved Courses"}</button>
+            <button onClick={handleApprove}>{display ? "View Courses" : "View Approved Courses"}</button>
 
             {/* Rest of your admin page content */}
             <input
@@ -93,19 +101,24 @@ function CoursesPage() {
             />
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', padding: '20px' }}>
-                {display ? approvedCourse.map(course => (
-                    <div key={course.id} onClick={() => handleCardClick(course)} style={{ width: '300px', border: '1px solid #ccc', borderRadius: '5px', padding: '20px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', cursor: 'pointer' }}>
-                        <img src={course.image} alt={course.name} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '5px' }} />
-                        <h2>{course.name}</h2>
-                        <p>{course.description}</p>
-                    </div>
-                )) : courses.map(course => (
-                    <div key={course.id} onClick={() => handleCardClick(course)} style={{ width: '300px', border: '1px solid #ccc', borderRadius: '5px', padding: '20px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', cursor: 'pointer' }}>
-                        <img src={course.image} alt={course.name} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '5px' }} />
-                        <h2>{course.name}</h2>
-                        <p>{course.description}</p>
-                    </div>
-                ))}
+               {display === 0 ? (
+    approvedCourse.map(course => (
+        <div  onClick={() => handleCardClick(course)} style={{ width: '300px', border: '1px solid #ccc', borderRadius: '5px', padding: '20px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', cursor: 'pointer' }}>
+            <img src={course.image} alt={course.name} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '5px' }} />
+            <h2>{course.name}</h2>
+            <p>{course.description}</p>
+        </div>
+    ))
+) : (
+    courses.map(course => (
+        <div  onClick={() => handleCardClick(course)} style={{ width: '300px', border: '1px solid #ccc', borderRadius: '5px', padding: '20px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)', cursor: 'pointer' }}>
+            <img src={course.image} alt={course.name} style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '5px' }} />
+            <h2>{course.name}</h2>
+            <p>{course.description}</p>
+        </div>
+    ))
+)}
+
             </div>
 
             {selectedCourse && (

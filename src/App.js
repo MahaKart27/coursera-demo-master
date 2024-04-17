@@ -7,6 +7,7 @@ import AdminPage from './AdminPage';
 import ErrorPage from './ErrorPage';
 import ProtectedRoute from './ProtectedRoute'; // Import the ProtectedRoute component
 import Paymentgateway from './Paymentgateway';
+import Register from './Register';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
                 />
         <Route path="/error" element={<ErrorPage />} />
         <Route path="/payment" element={<Paymentgateway/>}/>
+        <Route path="/register" element={<Register/>}/>
       </Routes>
     </Router>
   );
