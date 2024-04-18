@@ -8,14 +8,14 @@ function CoursesPage() {
     const [selectedCourse, setSelectedCourse] = useState(null);
     // const username = "exampleUser";  // This should be dynamically set based on the logged-in user.
     const username = sessionStorage.getItem('username') || 'Default User';
-    
+    console.log(username)
     const handleLogout = () => {
         sessionStorage.clear();  // This clears all session storage, including the username
         navigate('/');      // Redirect to login or any other public page
     };
 
     useEffect(() => {
-        fetch('http://localhost:5000/api/courses')
+        fetch('http://localhost:5000/api/courses1')
             .then(response => response.json())
             .then(data => {
                 // Ideally, check enrollments here and mark courses as enrolled if applicable
